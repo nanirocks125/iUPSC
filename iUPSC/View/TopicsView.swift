@@ -1,22 +1,27 @@
 import SwiftUI
 
-struct SubjectsView: View {
-    @ObservedObject var viewModel: SubjectViewModel
+struct TopicsView: View {
+    @ObservedObject var viewModel: TopicsViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     @State private var showAlert = false
     @State private var inputText = ""
-    
+
     var body: some View {
-        List(viewModel.subjects, id: \.id) { subject in
-            Text(subject.name)
-                .contentShape(Rectangle())
+        List(viewModel.topics, id: \.id) { topic in
+            Text(topic.name)
                 .onTapGesture {
-                    coordinator.push(route: .subjectDetails(subject))
+                    coordinator.push(route: .topicDetails(topic))
                 }
         }
-        .navigationTitle("Subjects")
+        .navigationTitle("Topics")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    showAlert = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+
                 AddButtonBindingView(tapped: $showAlert)
             }
         }
@@ -34,11 +39,12 @@ struct SubjectsView: View {
             if !showAlert {
                 if !inputText.isEmpty {
                     Task {
-                        await viewModel.addSubject(name: inputText)
+                        await viewModel.addTopic(name: inputText)
                         inputText = ""
                     }
                 }
             }
         }
+        
     }
 }
